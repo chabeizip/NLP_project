@@ -1,22 +1,8 @@
 # CS274A Natural Language Processing Spring 2025 Project
 
-<div align="center">
-<img width="200" src="https://huggingface.co/front/assets/huggingface_logo-noborder.svg" />
-<p>
-  Hugging Face Transformers
-  <br>
-  a powerful library for Natural Language Processing
-  <br>
-  builds up the most popular community of advanced AI
-</p>
-</div>
-
-This project is designed to help you get familiar with the Hugging Face Transformers library. You will complete some non-trivial tasks and train a novel model on a small dataset, all with only a few lines of code. The goal is to help you understand how to use the library and how to train models on your own.
-
-<sub>* The grader of this project is originally modified from the pacman project from CS188 in Berkeley, developed in spring 2019. Problems are designed for CS274A Natural Language Processing course project in ShanghaiTech University.</sub>
-
-> [!NOTE]
-> This is an individual project and group collaboration is not allowed. We will run plagiarism detection on your submitted code. We trust you all to submit your own work only; please don't let us down.
+get familiar with the Hugging Face Transformers library
+some non-trivial tasks
+train a novel model on a small dataset
 
 ## Setup
 
