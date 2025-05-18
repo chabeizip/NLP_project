@@ -1,8 +1,8 @@
 # CS274A Natural Language Processing Spring 2025 Project
 
-get familiar with the Hugging Face Transformers library
-some non-trivial tasks
-train a novel model on a small dataset
+1. Get familiar with the Hugging Face Transformers library.
+2. Complete some non-trivial tasks.
+3. Train a novel model on a small dataset.
 
 ## Setup
 
