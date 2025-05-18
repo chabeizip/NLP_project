@@ -1,0 +1,13 @@
+class: "ExceptionTest"
+success: "Test passed!"
+failure: "Test failed!"
+timeout: "5"
+
+preamble: """
+import transformerGrammar
+mapped = transformerGrammar.mapping_function({
+    "actions": ['<s>', '(1', '(1', '(1', '(1', '(1', '1', '1', '1', '1)', '1', '1', '1', '1)', '1', '1', '1', '1)', '1', '1', '1', '1)', '1', '1', '1', '1)', '1', '1', '1', '(1', '(1', '1', '1)', '1)', '</s>']
+})
+"""
+
+test: "mapped"

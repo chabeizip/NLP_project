@@ -1,0 +1,5 @@
+name: "Model Training"
+depends: "q5"
+max_points: "2"
+timeout: "300"
+class: "PartialCreditQuestion"

@@ -1,0 +1,5 @@
+name: "Transformer Grammar"
+depends: ""
+max_points: "3"
+timeout: "30"
+class: "PassAllTestsQuestion"

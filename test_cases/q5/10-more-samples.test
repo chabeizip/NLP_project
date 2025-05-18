@@ -1,0 +1,14 @@
+class: "PreProcessingTest"
+success: "Test passed!"
+failure: "Test failed!"
+timeout: "5"
+
+# The action sequence to process
+actions: """
+[
+    ['<s>', '(S', 'a', 'S)', '</s>'],
+    ['<s>', '(S', '(ADVP', 'even', 'ADVP)', '(NP', 'helen', 'mirren', 'NP)', '(VP', 'can', '(VP', 'hold', '(NP', 'a', 'gun', 'NP)', '(NP', 'these', 'days', 'NP)', 'VP)', 'VP)', '.', 'S)', '</s>'],
+    ['<s>', '(SBARQ', '(WHNP', 'what', 'crazy', 'person', 'WHNP)', '(SQ', 'would', '(VP', 'pop', '(NP', 'their', 'head', 'NP)', '(PP', 'through', '(NP', 'a', 'glass', 'ceiling', 'NP)', 'PP)', 'VP)', 'SQ)', '?', 'SBARQ)', '</s>'],
+    ['<s>', '(S', '(NP', 'There', 'NP)', '(VP', 'was', '(NP', '(NP', 'a', 'big', 'gap', 'NP)', '(PP', 'between', '(NP', '(NP', '(NP', 'the', '(QP', 'two', 'billion', 'QP)', 'NP)', '(PP', 'in', '(NP', 'the', 'industrialized', 'world', 'NP)', 'PP)', 'NP)', 'and', '(NP', '(NP', 'the', '(<unk>', '<unk>', '<unk>', '<unk>)', 'NP)', '(PP', 'in', '(NP', 'the', 'developing', 'world', 'NP)', 'PP)', 'NP)', 'NP)', 'PP)', 'NP)', 'VP)', '.', 'S)', '</s>'],
+]
+"""

@@ -1,0 +1,11 @@
+class: "PreProcessingTest"
+success: "Test passed!"
+failure: "Test failed!"
+timeout: "5"
+
+# The action sequence to process
+actions: """
+[
+    ['<s>', '(S', '(NP', 'the', 'blue', 'bird', 'NP)', '(VP', 'sings', 'VP)', 'S)', '</s>']
+]
+"""

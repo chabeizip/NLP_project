@@ -1,0 +1,8 @@
+class: "EvaluationTest"
+success: "Test passed!"
+failure: "Test failed!"
+timeout: "20"
+
+# The predictions and gold labels
+preds: "[[0, 2, 1, 0, 0, 2]]"
+golds: "[[0, 1, 2, 0, 1, 2]]"

@@ -1,0 +1,41 @@
+class: "HiddenTest"
+success: "Test passed!"
+failure: "The processed dataset is incorrect."
+timeout: "20"
+
+preamble: """
+from datasets import load_dataset
+
+from tokenizers import Tokenizer
+from tokenizers.models import WordLevel
+from tokenizers.pre_tokenizers import WhitespaceSplit
+from tokenizers.trainers import WordLevelTrainer
+from tokenizers.processors import TemplateProcessing
+
+from transformers import PreTrainedTokenizerFast
+
+from transformerGrammar import mapping_function
+
+
+dataset = load_dataset("text", data_files="data/corpus.cc", split="train")
+
+tokenizer = Tokenizer(WordLevel(unk_token="<unk>"))
+tokenizer.pre_tokenizer = WhitespaceSplit()
+trainer = WordLevelTrainer(special_tokens=["<unk>", "<s>", "</s>", "<pad>"])
+tokenizer.train_from_iterator(dataset["text"], trainer=trainer)
+tokenizer.post_processor = TemplateProcessing(
+    single="<s> $A </s>",
+    special_tokens=[("<s>", tokenizer.token_to_id("<s>")), ("</s>", tokenizer.token_to_id("</s>"))],
+)
+tokenizer = PreTrainedTokenizerFast(tokenizer_object=tokenizer)
+tokenizer.add_special_tokens({'pad_token': '<pad>', 'bos_token': '<s>', 'eos_token': '</s>'})
+
+def tokenize_function(example):
+    tokenized = tokenizer.tokenize(example["text"], add_special_tokens=True)
+    return {"actions": tokenized}
+
+tokenized_dataset = dataset.map(tokenize_function, batched=False, remove_columns=["text"], load_from_cache_file=False)
+mapped_dataset = tokenized_dataset.map(mapping_function, batched=False, remove_columns=["actions"], load_from_cache_file=False)
+"""
+
+test: "'\n'.join([str(x[key]) for x in mapped_dataset for key in ['inputs', 'labels', 'position_ids', 'attention_mask']])"

@@ -1,0 +1,5 @@
+name: "The Chat Templates"
+depends: ""
+max_points: "3"
+timeout: "60"
+class: "PassAllTestsQuestion"

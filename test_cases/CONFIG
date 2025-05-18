@@ -1,0 +1,31 @@
+order: "q1 q2 q3 q4 q5 q6"
+exceptionMap: """
+{
+  'q2': {
+    "<class 'util.TimeoutFunctionException'>": '''
+      We noticed that your project threw a Timeout Exception on q2.
+      While many things may cause this, it may have been from
+      1. being blocked by a firewall. See the troubleshooting section
+      of the README for more information.
+      2. downloading a model that is too large. Try to select a
+      smaller model with less parameters (<100M) and submit again!
+    '''
+  },
+  'q4': {
+    "<class 'util.TimeoutFunctionException'>": '''
+      We noticed that your project threw a Timeout Exception on q4.
+      While many things may cause this, it may have been from using an
+      improper chat template such that the model keeps generating
+      tokens without stopping. Please refer to the README for more
+      information on how to properly format your chat template. Remember
+      that the chat template is sensitive to spaces and newlines.
+    ''',
+    "<class 'OSError'>": '''
+      We noticed that your project threw a OSError on q4. While many
+      things may cause this, it may have been from installing 'hf_xet'
+      package which we do not need. Refer to the troubleshooting section
+      of the README for more information.
+    '''
+  },
+}
+"""

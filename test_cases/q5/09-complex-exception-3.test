@@ -1,0 +1,13 @@
+class: "ExceptionTest"
+success: "Test passed!"
+failure: "Test failed!"
+timeout: "5"
+
+preamble: """
+import transformerGrammar
+mapped = transformerGrammar.mapping_function({
+    "actions": ['<s>', '(nlp', 'a()a', 'a()a', 'a()a', 'a()a', 'a()a', 'a()a', 'a()a', 'a()a', 'a()a', 'a()a', 'a()a', 'a()a', 'nlp)', '1', '1', 'nlp)', 'nlp)', '</s>']
+})
+"""
+
+test: "mapped"

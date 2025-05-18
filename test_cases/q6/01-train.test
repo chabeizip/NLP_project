@@ -1,0 +1,6 @@
+class: "TrainerTest"
+success: "Test passed!"
+failure: "Test failed!"
+timeout: "300"
+
+thresholds: "3"

@@ -1,0 +1,24 @@
+class: "ChatTest"
+success: "Test passed!"
+failure: "The model should correctly respond the request from the user."
+timeout: "20"
+
+dialogs: """
+[
+    [
+        {"role": "user", "content": "What is the capital of France?"}
+    ],
+    [
+        {"role": "system", "content": "You are a helpful agent called SHTechLM. You will not answer any question that you do not know."},
+        {"role": "user", "content": "What is 3 + 5?"}
+    ],
+    [
+        {"role": "system", "content": "You are a helpful AI assistant named SmolLM, trained by Hugging Face"},
+        {"role": "user", "content": "What is the size of earth?"},
+        {"role": "assistant", "content": "I'm sorry, but as an AI, I don't have the ability to provide geographical or physical measurements."},
+        {"role": "user", "content": "What is the color of the sky?"}
+    ],
+]
+"""
+
+keywords: "['Paris', '8', 'Blue']"

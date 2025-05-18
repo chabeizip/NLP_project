@@ -1,0 +1,16 @@
+class: "VocabTest"
+success: "Test passed!"
+failure: "The tokenizer must not merge the numbers, including zeros."
+timeout: "5"
+
+# The well-trained vocab and merges
+vocab: "{'Ġ': 0, '0': 1, '1': 2, '2': 3, 'Ġ1': 4, 'Ġ2': 5, '12': 6, 'Ġ12': 7, 'Ġ0': 8, '00': 9, 'Ġ00': 10}"
+merges: "[('Ġ', '0'), ('Ġ', '1'), ('Ġ', '2'), ('0', '0'), ('Ġ', '00')]"
+
+# The sentences to tokenize
+sentences: """
+[
+    "00 000 0000",
+    "0111212 120012121 2112 2212 00"
+]
+"""

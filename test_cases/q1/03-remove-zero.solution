@@ -1,0 +1,5 @@
+# This is the solution file for test_cases/q1/03-remove-zero.test.
+# The tokenization of each sentence must equal the below.
+results: """
+['0 0 Ġ0 0 0 Ġ0 0 0 0', '0 1 1 1 2 1 2 Ġ1 2 0 0 1 2 1 2 1 Ġ2 1 1 2 Ġ2 2 1 2 Ġ0 0']
+"""

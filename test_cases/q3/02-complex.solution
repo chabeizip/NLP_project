@@ -1,0 +1,3 @@
+# This is the solution file for test_cases/q3/02-complex.test.
+# The macro F1 score of each pair of preds and golds must equal the below.
+results: "[0.0, 0.125, 0.1943, 1.0, 0.8222, 0.7487]"
