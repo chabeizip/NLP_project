@@ -57,42 +57,28 @@ def clean_vocab(vocab: Dict[str, int], merges: List[Tuple[str, str]]):
     """
 
     """YOUR CODE HERE"""
+    vocab_sorted = sorted(vocab.items(), key=lambda kv: kv[1])
+
+    new_vocab: Dict[str, int] = {}
     i = 0
-    for key in list(vocab.keys()):
-        # 00 10 11 12...
-        if sum(c.isdigit() for c in key) > 1:
-            del vocab[key]
-        elif sum(c.isdigit() for c in key) == 1:
-            # G1a a1a 1aa
-            if len(key) > 2:
-                del vocab[key]
-            # 1a a1
-            elif len(key) == 2 and key[0] != 'Ġ':
-                del vocab[key]
-            else:
-                # 1 G1
-                vocab[key] = i
-                i = i+1
+    for key, value in vocab_sorted:
+        key_body = key.lstrip('Ġ')
+        if key_body.isdigit() and len(key_body) > 1:
+            continue
         else:
-            # abcd
-            vocab[key] = i
+            new_vocab[key] = i
             i = i+1
-            # print(vocab[key])
-    
-    for m in list(merges):
-        # (0, )
-        if sum(c.isdigit() for c in m[0])>0:
-            merges.remove(m)
-        # (a,0)
-        elif sum(c.isdigit() for c in m[1])>0 and m[0]!='Ġ':
-            merges.remove(m)
-        elif (m[0]+m[1]) not in vocab.keys():
-            merges.remove(m)
-        elif m[0] not in vocab.keys():
-            merges.remove(m)
-        elif m[1] not in vocab.keys():
-            merges.remove(m)
-    # util.raiseNotDefined()
+    vocab.clear()
+    vocab.update(new_vocab)
+
+    new_merges: List[Tuple[str, str]] = []
+    for x, y in merges:
+        if (x + y) not in vocab:
+            continue
+        elif x not in vocab or y not in vocab:
+            continue
+        new_merges.append((x,y))
+    merges[:] = new_merges
 
 
 if __name__ == '__main__':
