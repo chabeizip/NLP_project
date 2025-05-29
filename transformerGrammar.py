@@ -67,7 +67,136 @@ def mapping_function(example: dict) -> dict:
     """
 
     """YOUR CODE HERE"""
-    util.raiseNotDefined()
+    actions = example["actions"]
+    if actions[0] != "<s>" or actions[-1] != "</s>":
+        raise InvalidTreeError("Invalid start/end tokens")
+
+    stack = []
+    has_non_terminals = False 
+    
+    for action in actions[1:-1]: 
+        if action[0] == '(':
+            stack.append(action[1:])
+            has_non_terminals = True
+        elif action[-1] == ')':
+            if not stack or stack.pop() != action[:-1]:
+                raise InvalidTreeError("Invalid parentheses structure")
+        
+    
+    if not has_non_terminals:  
+        raise InvalidTreeError("Input sequence lacks valid syntactic tree structure")
+    all_digits_fail = True
+    for action in actions[1:-1]: 
+        if action.startswith('('):
+            action = action[1:]
+        if action.endswith(')'):
+            action = action[:-1]
+        if not action.isdigit():
+            all_digits_fail = False
+    if all_digits_fail:
+        raise InvalidTreeError("All tokens are digits, which is invalid")
+    
+    stack = []
+    node_has_children = []
+    for idx, action in enumerate(actions):
+        if action.startswith('('):
+            stack.append(action[1:])
+            node_has_children.append(False) 
+        elif action.endswith(')'):
+            expected_tag = stack.pop()
+            current_has_children = node_has_children.pop()    
+            if not current_has_children:
+                raise InvalidTreeError(f"Empty non-terminal {expected_tag} at position {idx}")
+        else:
+            if stack:
+                node_has_children[-1] = True
+
+        if stack and idx > 0:
+            prev_action = actions[idx-1]
+            if prev_action.startswith('('):
+                parent_index = -2 
+                if len(node_has_children) >= 2:
+                    node_has_children[parent_index] = True
+    
+    if stack:
+        raise InvalidTreeError("Invalid action sequence")
+    
+    # 2. Process input: duplicate closing nonterminals
+    processed_inputs = []
+    for action in actions:
+        processed_inputs.append(action)
+        if action.endswith(')'):
+            processed_inputs.append(action)
+    
+    # 3. Process output: insert <pad> after closing nonterminals
+    processed_output = []
+    for action in actions:
+        processed_output.append(action)
+        if action.endswith(')'):
+            processed_output.append('<pad>')
+
+    
+    # 4. position_ids
+    position_ids = []
+    stack_depth = 0
+    
+    expanded_sequence = []
+    for token in actions:
+        expanded_sequence.append(token)
+        if token.endswith(')'):
+            expanded_sequence.append('<pad>')
+    stack = []
+    
+    for token in expanded_sequence:
+        if token.startswith('('): 
+            stack.append(token)
+            position_ids.append(stack_depth)
+            stack_depth += 1
+        elif token.endswith(')') and not token.startswith('('): 
+            stack_depth -= 1
+            position_ids.append(stack_depth)
+            stack.pop() 
+        elif token in ['<s>', '</s>']:
+            position_ids.append(0) 
+        else: 
+            position_ids.append(stack_depth)
+    while stack:
+        current_depth -= 1
+        position_ids.append(current_depth)
+
+    # 5. Create attention mask
+    seq_len = len(processed_inputs)
+    attention_mask = torch.zeros(seq_len, seq_len)
+    mask_stack = []
+    flag = False
+    for i in range(seq_len-1):
+        tmp = processed_inputs[i]
+        attention_mask[i][i] = 1
+        if tmp[-1] != ')':
+            for j in mask_stack:
+                attention_mask[i][j] = 1
+            mask_stack.append(i)
+        elif processed_inputs[i-1] == tmp and not flag:
+            flag = True
+            for j in mask_stack:
+                attention_mask[i][j] = 1
+        else:
+            flag = False
+            for j in list(mask_stack[::-1]):
+                attention_mask[i][j] = 1
+                if processed_inputs[j][0] == '(':
+                    mask_stack.pop()
+                    break
+                mask_stack.pop()
+            mask_stack.append(i)
+    
+
+    return {
+        "inputs": processed_inputs,
+        "labels": processed_output,
+        "position_ids": position_ids,
+        "attention_mask": attention_mask,
+    }
 
 
 def get_trainer(
@@ -75,27 +204,6 @@ def get_trainer(
     model: PreTrainedModel,
     train_dataset: Dataset
 ) -> Trainer:
-    """
-    Question:
-        Create a Trainer object for the model. The Trainer is used to train the model on the dataset.
-        Select the appropriate training arguments for the Trainer. For example, setting the proper learning rate,
-        batch size, optimizer, learning rate scheduler, number of epochs, etc. would be a good idea.
-
-    Args:
-        tokenizer (PreTrainedTokenizerFast): The tokenizer to use for the model.
-        model (PreTrainedModel): The model to train.
-        train_dataset (Dataset): The dataset to train on.
-
-    Returns:
-        trainer (Trainer): The Trainer object for the model.
-
-    Example:
-        >>> trainer = get_trainer(tokenizer, model, train_dataset)
-        >>> trainer.train()
-        >>> trainer.evaluate(train_dataset)
-        {'eval_loss': 2.1234, ...}
-    """
-
     def data_collator(features):
         """
         Data collator is to aggregate the features into a batch. You'll find it helpful when creating the Trainer.
@@ -132,8 +240,34 @@ def get_trainer(
 
         return batch
 
-    """YOUR CODE HERE"""
-    util.raiseNotDefined()
+    # 配置训练参数
+    training_args = TrainingArguments(
+        output_dir="./results",          # 输出目录
+        num_train_epochs=3,             # 训练轮数
+        per_device_train_batch_size=8,  # 每个设备的训练batch大小
+        per_device_eval_batch_size=8,   # 每个设备的评估batch大小
+        warmup_steps=500,               # 学习率预热步数
+        weight_decay=0.01,              # 权重衰减
+        logging_dir="./logs",           # 日志目录
+        logging_steps=10,               # 每多少步记录一次日志
+        eval_strategy="steps",    # 评估策略
+        eval_steps=500,                 # 每多少步评估一次
+        save_steps=1000,               # 每多少步保存一次模型
+        save_total_limit=2,            # 最多保存的模型数量
+        learning_rate=5e-5,             # 学习率
+        fp16=True,                      # 是否使用混合精度训练
+        load_best_model_at_end=True,    # 训练结束时加载最佳模型
+    )
+
+    # 创建并返回Trainer实例
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset,
+        data_collator=data_collator,
+    )
+    
+    return trainer
 
 
 def main():
