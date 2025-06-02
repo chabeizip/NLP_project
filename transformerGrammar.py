@@ -204,6 +204,27 @@ def get_trainer(
     model: PreTrainedModel,
     train_dataset: Dataset
 ) -> Trainer:
+    """
+    Question:
+        Create a Trainer object for the model. The Trainer is used to train the model on the dataset.
+        Select the appropriate training arguments for the Trainer. For example, setting the proper learning rate,
+        batch size, optimizer, learning rate scheduler, number of epochs, etc. would be a good idea.
+
+    Args:
+        tokenizer (PreTrainedTokenizerFast): The tokenizer to use for the model.
+        model (PreTrainedModel): The model to train.
+        train_dataset (Dataset): The dataset to train on.
+
+    Returns:
+        trainer (Trainer): The Trainer object for the model.
+
+    Example:
+        >>> trainer = get_trainer(tokenizer, model, train_dataset)
+        >>> trainer.train()
+        >>> trainer.evaluate(train_dataset)
+        {'eval_loss': 2.1234, ...}
+    """
+
     def data_collator(features):
         """
         Data collator is to aggregate the features into a batch. You'll find it helpful when creating the Trainer.
@@ -239,27 +260,20 @@ def get_trainer(
         batch["attention_mask"] = torch.stack(batch["attention_mask"])
 
         return batch
-
-    # 配置训练参数
+    
+    """YOUR CODE HERE"""
     training_args = TrainingArguments(
-        output_dir="./results",          # 输出目录
-        num_train_epochs=3,             # 训练轮数
-        per_device_train_batch_size=8,  # 每个设备的训练batch大小
-        per_device_eval_batch_size=8,   # 每个设备的评估batch大小
-        warmup_steps=500,               # 学习率预热步数
-        weight_decay=0.01,              # 权重衰减
-        logging_dir="./logs",           # 日志目录
-        logging_steps=10,               # 每多少步记录一次日志
-        eval_strategy="steps",    # 评估策略
-        eval_steps=500,                 # 每多少步评估一次
-        save_steps=1000,               # 每多少步保存一次模型
-        save_total_limit=2,            # 最多保存的模型数量
-        learning_rate=5e-5,             # 学习率
-        fp16=True,                      # 是否使用混合精度训练
-        load_best_model_at_end=True,    # 训练结束时加载最佳模型
+        output_dir="./results",
+        per_device_train_batch_size=4,
+        num_train_epochs=6,
+        save_steps=10_000,
+        save_total_limit=2,
+        learning_rate=8e-3,
+        weight_decay=0.008,
+        warmup_steps=500,
+        metric_for_best_model = "las"
     )
-
-    # 创建并返回Trainer实例
+    
     trainer = Trainer(
         model=model,
         args=training_args,
