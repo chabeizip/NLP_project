@@ -264,14 +264,15 @@ def get_trainer(
     """YOUR CODE HERE"""
     training_args = TrainingArguments(
         output_dir="./results",
-        per_device_train_batch_size=4,
-        num_train_epochs=6,
+        logging_dir="./logs",
+        logging_steps=500,
         save_steps=10_000,
         save_total_limit=2,
-        learning_rate=8e-3,
-        weight_decay=0.008,
+        learning_rate=5e-5,
+        weight_decay=0.01,
         warmup_steps=500,
-        metric_for_best_model = "las"
+        per_device_train_batch_size=4,
+        num_train_epochs=5,
     )
     
     trainer = Trainer(
